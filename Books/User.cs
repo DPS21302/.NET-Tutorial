@@ -21,6 +21,8 @@ public class User
     public string UserImage { get; set; } = "";
     public string UserFullName { get; set; }
     public ICollection<ForgotPassword> ForgotPasswords { get; set; }
+
+    public ICollection<UserDetail> UserDetails { get; set; }
 }
 
 public class UserDetail
@@ -30,7 +32,7 @@ public class UserDetail
     public int UserId { get; set; }
     public string Name { get; set; }
     public string Surname { get; set; }
-    public string EmployeeId { get; set; }
+    public int EmployeeId { get; set; }
     public string Manager { get; set; }
     public string Title { get; set; }
     public string Department { get; set; }
@@ -43,6 +45,7 @@ public class UserDetail
     public string MySkills { get; set; }
     public string UserImage { get; set; }
     public bool Status { get; set; }
+    public User User { get; set; } // Navigation property
 }
 
 public class ForgotPassword
