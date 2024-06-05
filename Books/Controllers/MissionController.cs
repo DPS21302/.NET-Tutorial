@@ -38,8 +38,6 @@ namespace Books.Controllers
 
             return mission;
         }
-
-        // PUT: api/Missions/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMission(int id, MissionDto missionDto)
         {
@@ -54,6 +52,7 @@ namespace Books.Controllers
                 return NotFound();
             }
 
+            // Update only the properties present in the DTO
             mission.CountryId = missionDto.CountryId;
             mission.CityId = missionDto.CityId;
             mission.MissionDescription = missionDto.MissionDescription;
@@ -62,6 +61,15 @@ namespace Books.Controllers
             mission.EndDate = missionDto.EndDate;
             mission.MissionImages = missionDto.MissionImages;
             mission.MissionSkillId = missionDto.MissionSkillId;
+            mission.MissionTitle = mission.MissionTitle ?? "Default Mission Title"; // Set a default value if null
+            mission.MissionOrganisationName = mission.MissionOrganisationName; // Leave as is
+            mission.MissionOrganisationDetail = mission.MissionOrganisationDetail; // Leave as is
+            mission.MissionType = mission.MissionType; // Leave as is
+            mission.RegistrationDeadLine = mission.RegistrationDeadLine; // Leave as is
+            mission.MissionThemeId = mission.MissionThemeId ?? "Default Theme"; // Set a default value if null
+            mission.MissionDocuments = mission.MissionDocuments; // Leave as is
+            mission.MissionAvilability = mission.MissionAvilability; // Leave as is
+            mission.MissionVideoUrl = mission.MissionVideoUrl; // Leave as is
 
             _context.Entry(mission).State = EntityState.Modified;
 
@@ -84,9 +92,8 @@ namespace Books.Controllers
             return NoContent();
         }
 
-        // POST: api/Missions
         [HttpPost]
-        public async Task<ActionResult<Mission>> PostMission(MissionDto missionDto)
+        public async Task<ActionResult<Mission>> PostMission([FromBody] MissionDto missionDto)
         {
             Mission mission = new Mission
             {
@@ -97,7 +104,16 @@ namespace Books.Controllers
                 StartDate = missionDto.StartDate,
                 EndDate = missionDto.EndDate,
                 MissionImages = missionDto.MissionImages,
-                MissionSkillId = missionDto.MissionSkillId
+                MissionSkillId = missionDto.MissionSkillId,
+                MissionTitle = missionDto.MissionTitle, // Set a default value for MissionTitle
+                MissionOrganisationName = null, // Set to null or provide a default value
+                MissionOrganisationDetail = null, // Set to null or provide a default value
+                MissionType = null, // Set to null or provide a default value
+                RegistrationDeadLine = null, // Set to null or provide a default value
+                MissionThemeId = missionDto.MissionSkillId, // Set a default value or provide a better value
+                MissionDocuments = null, // Set to null or provide a default value
+                MissionAvilability = null, // Set to null or provide a default value
+                MissionVideoUrl = null // Set to null or provide a default value
             };
 
             _context.Missions.Add(mission);
@@ -113,14 +129,15 @@ namespace Books.Controllers
             var mission = await _context.Missions.FindAsync(id);
             if (mission == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Mission not found" });
             }
 
             _context.Missions.Remove(mission);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { message = "Mission successfully deleted" });
         }
+
 
         private bool MissionExists(int id)
         {
@@ -137,8 +154,14 @@ namespace Books.Controllers
         public int? TotalSheets { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public string? MissionImages { get; set; }
+        public string? MissionImages { get; set; } // Ensure this is a string
         public string? MissionSkillId { get; set; }
-        // Add other fields as needed
+        public string? MissionThemeId { get; set; } // Changed to string to match your frontend
+        public string MissionTitle { get; set; }
+        public string? MissionOrganisationName { get; set; }
+        public string? MissionOrganisationDetail { get; set; }
+        public string? CountryName { get; set; }
+        public string? CityName { get; set; }
     }
+
 }
